@@ -1,18 +1,19 @@
-import { sql } from "drizzle-orm";
-import { pgTable, text, varchar } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, timestamp, numeric } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const users = pgTable("users", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  username: text("username").notNull().unique(),
-  password: text("password").notNull(),
+export const vehicles = pgTable("vehicles", {
+  id: serial("id").primaryKey(),
+  imei: text("imei").notNull().unique(),
+  lat: numeric("lat").notNull(),
+  lng: numeric("lng").notNull(),
+  speed: numeric("speed"),
+  battery: numeric("battery"),
+  altitude: numeric("altitude"),
+  timestamp: timestamp("timestamp").defaultNow(),
 });
 
-export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
-  password: true,
-});
-
-export type InsertUser = z.infer<typeof insertUserSchema>;
-export type User = typeof users.$inferSelect;
+export const insertVehicleSchema = createInsertSchema(vehicles).omit({ id: true });
+export type InsertVehicle = z.infer<typeof insertVehicleSchema>;
+export type Vehicle = typeof vehicles.$inferSelect;
+export type UpdateVehicleRequest = Partial<InsertVehicle>;
