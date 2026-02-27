@@ -1,20 +1,20 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
+import { storage } from "../data/storage";
 import { api } from "@shared/routes";
 import { z } from "zod";
 import { WebSocketServer, WebSocket } from "ws";
-import { startTcpListener } from "./tcpListener";
+import { startTcpListener } from "../tracking/tcpListener";
 
 const clients = new Set<WebSocket>();
 
 export function broadcastLocationUpdate(vehicle: any) {
   const message = JSON.stringify({ type: 'location_update', payload: vehicle });
-  for (const client of clients) {
+  clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN) {
       client.send(message);
     }
-  }
+  });
 }
 
 export async function registerRoutes(

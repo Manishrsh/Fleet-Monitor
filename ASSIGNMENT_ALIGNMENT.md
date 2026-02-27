@@ -17,7 +17,7 @@
 - HTTP Server: **Port 5000**
 - WebSocket: **ws://localhost:5000/ws**
 
-**Message Parser** (`server/tcpListener.ts`):
+**Message Parser** (`apps/backend/src/tcpListener.ts`):
 ```
 Input: $1,AEPL,0.0.1,NR,2,H,860738079276675,...,18.465794,N,73.782791,E,...
 Output: {
@@ -57,7 +57,7 @@ Create database with:
 
 **Database: PostgreSQL**
 
-**Schema** (`shared/schema.ts`):
+**Schema** (`packages/shared/schema.ts`):
 ```typescript
 vehicles {
   id: SERIAL PRIMARY KEY,
@@ -71,7 +71,7 @@ vehicles {
 }
 ```
 
-**Storage Layer** (`server/storage.ts`):
+**Storage Layer** (`apps/backend/src/storage.ts`):
 - ✅ DatabaseStorage class encapsulates all DB operations
 - ✅ getVehicles() - Fetch all vehicles
 - ✅ getVehicleByImei() - Find vehicle by IMEI
@@ -125,12 +125,12 @@ Content-Type: application/json
 - ✅ Broadcasts update to WebSocket clients
 - ✅ Returns 200 status with vehicle data
 
-**API Validation** (`shared/routes.ts`):
+**API Validation** (`packages/shared/routes.ts`):
 - ✅ Schema validation for all inputs
 - ✅ Type-safe route definitions
 - ✅ Error response schemas
 
-**Implemented in:** `server/routes.ts`
+**Implemented in:** `apps/backend/src/routes.ts`
 
 ---
 
@@ -145,7 +145,7 @@ Create dashboard with split view:
 
 ### Implementation Status: ✅ COMPLETE
 
-**Component 1: VehicleList** (`client/src/components/VehicleList.tsx`)
+**Component 1: VehicleList** (`apps/frontend/src/components/VehicleList.tsx`)
 - ✅ Displays all vehicles in scrollable list
 - ✅ Shows vehicle count statistics
   - Total vehicles count
@@ -158,7 +158,7 @@ Create dashboard with split view:
   - Red: Stopped (speed = 0)
 - ✅ Displays speed, battery, last updated time
 
-**Component 2: FleetMap** (`client/src/components/FleetMap.tsx`)
+**Component 2: FleetMap** (`apps/frontend/src/components/FleetMap.tsx`)
 - ✅ Leaflet-based interactive map
 - ✅ Custom glowing CSS markers (no static images)
 - ✅ Marker colors match status:
@@ -179,7 +179,7 @@ Create dashboard with split view:
 - ✅ Fallback polling every 15 seconds (useVehicles hook)
 - ✅ No full page refreshes
 
-**Dashboard Layout** (`client/src/pages/Dashboard.tsx`)
+**Dashboard Layout** (`apps/frontend/src/pages/Dashboard.tsx`)
 - ✅ Responsive split-view
   - Left: Vehicle list (400px on desktop, full width on mobile)
   - Right: Map (flex-1, full height)

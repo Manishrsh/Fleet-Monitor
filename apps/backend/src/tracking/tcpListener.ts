@@ -1,10 +1,10 @@
 import * as net from 'net';
-import { storage } from './storage';
-import { broadcastLocationUpdate } from './routes';
+import { storage } from '../data/storage';
+import { broadcastLocationUpdate } from '../http/routes';
 
 // Example message: $1,AEPL,0.0.1,NR,2,H,860738079276675,...,18.465794,N,73.782791,E,...
 export function startTcpListener() {
-  let PORT = 5001;
+  let PORT = 5000;
   const server = net.createServer((socket) => {
     console.log('TCP Client connected:', socket.remoteAddress, socket.remotePort);
 

@@ -2,6 +2,21 @@
 
 A full stack fleet tracking dashboard with realtime updates via WebSockets and a raw TCP listener for IoT devices.
 
+## Project Structure
+```text
+apps/
+  frontend/            # React app (UI)
+  backend/
+    src/
+      http/            # REST routes + websocket broadcast
+      tracking/        # TCP listener / parser
+      data/            # data access layer
+      db/              # database connection
+      platform/        # vite/static serving integration
+packages/
+  shared/              # shared API contracts + schema types
+```
+
 ## Tech Stack
 - **Backend:** Node.js, Express, WebSockets (ws), Drizzle ORM
 - **Database:** PostgreSQL
@@ -9,17 +24,15 @@ A full stack fleet tracking dashboard with realtime updates via WebSockets and a
 - **Maps:** Leaflet, React Leaflet
 
 ## Database Setup
-The application uses Replit's built-in PostgreSQL database.
-The schema is automatically pushed to the database on start (`npm run db:push`).
+The application uses PostgreSQL.
+Push the schema with:
 
-If setting up locally or manually, you can use the schema provided in `database_schema.sql` (generated below) or just use Drizzle:
 ```bash
 npm run db:push
 ```
 
 ## How to Run the Frontend & Backend
-The project is built on Replit and uses Vite for the frontend and Express for the backend.
-To run the entire stack (Frontend + Backend HTTP Server + WebSocket Server + TCP Listener):
+Run the full stack (Frontend + Backend HTTP Server + WebSocket Server + TCP Listener):
 
 ```bash
 npm run dev

@@ -1,5 +1,10 @@
 # Quick Start Guide
 
+## Project Layout
+- Frontend: `apps/frontend`
+- Backend: `apps/backend/src`
+- Shared contracts/types: `packages/shared`
+
 ## To Run the Application
 
 ### 1. Install Dependencies
