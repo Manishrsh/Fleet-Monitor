@@ -1,14 +1,21 @@
 import { drizzle } from "drizzle-orm/node-postgres";
-import pg from "pg";
+import { Pool } from "pg";
 import * as schema from "@shared/schema";
 
-const { Pool } = pg;
+// Prefer an explicit environment variable. Trim surrounding whitespace
+// and strip accidental surrounding single-quotes which can happen
+// when a connection string is copied with quotes.
+const rawConnection = (process.env.DATABASE_URL || "postgresql://neondb_owner:npg_URdHPNSO0jD4@ep-gentle-cherry-aiq43mul-pooler.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require");
+const connectionString = String(rawConnection).trim().replace(/^'|'$/g, "");
 
-if (!process.env.DATABASE_URL) {
-  throw new Error(
-    "DATABASE_URL must be set. Did you forget to provision a database?",
-  );
-}
+// Determine whether to enable SSL for the Pool. Allow overriding with
+// `DB_SSL=false` or `DB_REJECT_UNAUTHORIZED=false` if needed for testing.
+const useSsl = process.env.DB_SSL === undefined ? true : process.env.DB_SSL !== "false";
 
-export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const pool = new Pool({
+    connectionString,
+    ssl: useSsl ? { rejectUnauthorized: process.env.DB_REJECT_UNAUTHORIZED !== "false" } : undefined,
+});
+
+export { pool };
 export const db = drizzle(pool, { schema });
