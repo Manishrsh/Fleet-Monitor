@@ -4,14 +4,14 @@ import { broadcastLocationUpdate } from './routes';
 
 // Example message: $1,AEPL,0.0.1,NR,2,H,860738079276675,...,18.465794,N,73.782791,E,...
 export function startTcpListener() {
-  const PORT = 5001;
+  let PORT = 5001;
   const server = net.createServer((socket) => {
     console.log('TCP Client connected:', socket.remoteAddress, socket.remotePort);
 
     socket.on('data', async (data) => {
       const message = data.toString().trim();
       console.log('TCP Received:', message);
-      
+
       try {
         const parts = message.split(',');
         // Extract IMEI
@@ -34,17 +34,17 @@ export function startTcpListener() {
             if (parts[i] === 'W') lngStr = "-" + lngStr;
           }
         }
-        
+
         if (imei && latStr !== "0" && lngStr !== "0") {
           const updateData = {
             imei,
             lat: latStr,
             lng: lngStr,
-            speed: "0", 
-            battery: "100", 
+            speed: "0",
+            battery: "100",
             timestamp: new Date(),
           };
-          
+
           let vehicle = await storage.getVehicleByImei(imei);
           if (vehicle) {
             vehicle = await storage.updateVehicleLocation(imei, {
@@ -63,7 +63,7 @@ export function startTcpListener() {
               timestamp: updateData.timestamp
             });
           }
-          
+
           broadcastLocationUpdate(vehicle);
         }
       } catch (err) {
@@ -78,6 +78,16 @@ export function startTcpListener() {
     socket.on('error', (err) => {
       console.error('TCP Socket error:', err);
     });
+  });
+
+  server.on('error', (err: any) => {
+    if (err.code === 'EADDRINUSE') {
+      console.warn(`Port ${PORT} is already in use, trying ${PORT + 1}...`);
+      PORT++;
+      setTimeout(() => startTcpListener(), 1000);
+    } else {
+      console.error('TCP Server error:', err);
+    }
   });
 
   server.listen(PORT, '0.0.0.0', () => {
