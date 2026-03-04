@@ -38,16 +38,16 @@ Run the full stack (Frontend + Backend HTTP Server + WebSocket Server + TCP List
 npm run dev
 ```
 
-The Express server will start on port 5000 (which also serves the Vite frontend in dev mode) and the WebSocket server is attached to it at `/ws`.
+The Express server will start on port 5001 (which also serves the Vite frontend in dev mode) and the WebSocket server is attached to it at `/ws`.
 
 ## How to Run the TCP Listener
 The TCP listener automatically starts along with the backend server on **port 5001**.
-(Port 5001 is used because 5000 is used by the main web server).
+(Port 5000 is used because 5000 is used by the main web server).
 
 You can test the TCP listener by sending a raw message using `netcat` or `telnet`:
 
 ```bash
-nc localhost 5001
+nc localhost 5000
 $1,AEPL,0.0.1,NR,2,H,860738079276675,some,data,18.465794,N,73.782791,E,more,data
 ```
 The dashboard will instantly update the map marker for that vehicle.
