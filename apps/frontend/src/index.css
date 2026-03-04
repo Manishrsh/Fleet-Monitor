@@ -71,8 +71,8 @@
 }
 
 /* Custom Leaflet Map Styling for Dark Mode */
+/* Leaflet Map Styling */
 .leaflet-container {
-  background: #0f172a !important;
   font-family: var(--font-sans);
 }
 
@@ -80,7 +80,7 @@
 .leaflet-control-zoom-in,
 .leaflet-control-zoom-out,
 .leaflet-control-attribution {
-  filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+  filter: none !important;
 }
 
 .leaflet-popup-content-wrapper {
