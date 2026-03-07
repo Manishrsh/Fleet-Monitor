@@ -1,89 +1,60 @@
-import * as net from 'net';
-import { storage } from '../data/storage';
-import { broadcastLocationUpdate } from '../http/routes';
+import * as net from "net";
+import { storage } from "../data/storage";
+import { broadcastLocationUpdate } from "../websocket/websocket.server";
 
 export function startTcpListener() {
-  const PORT = 5000;
 
   const server = net.createServer((socket) => {
-    console.log('TCP Client connected:', socket.remoteAddress, socket.remotePort);
 
-    socket.on('data', async (data) => {
+    console.log("TCP Client connected");
+
+    socket.on("data", async (data) => {
+
       const message = data.toString().trim();
-      console.log('TCP Received:', message);
 
-      try {
+      if (!message.startsWith("$SLU")) return;
 
-        // Ignore non SLU packets
-        if (!message.startsWith('$SLU')) return;
+      const parts = message.split(",");
 
-        const parts = message.split(',');
+      const imei = parts[0].replace("$SLU", "");
+      const lat = parts[6];
+      const lng = parts[7];
+      const speed = parts[8] || "0";
 
-        // Extract IMEI
-        const imei = parts[0].replace('$SLU', '');
+      if (!imei || !lat || !lng) return;
 
-        // Extract GPS data
-        const lat = parts[6];
-        const lng = parts[7];
-        const speed = parts[8] || "0";
+      let vehicle = await storage.getVehicleByImei(imei);
 
-        console.log("Parsed Data:", { imei, lat, lng, speed });
+      if (vehicle) {
 
-        if (!imei || !lat || !lng) return;
+        vehicle = await storage.updateVehicleLocation(imei, {
+          lat,
+          lng,
+          timestamp: new Date()
+        });
 
-        const updateData = {
+      } else {
+
+        vehicle = await storage.createVehicle({
           imei,
           lat,
           lng,
           speed,
           battery: "100",
+          altitude: "0",
           timestamp: new Date()
-        };
+        });
 
-        let vehicle = await storage.getVehicleByImei(imei);
-
-        if (vehicle) {
-
-          vehicle = await storage.updateVehicleLocation(imei, {
-            lat: updateData.lat,
-            lng: updateData.lng,
-            timestamp: updateData.timestamp
-          });
-
-        } else {
-
-          vehicle = await storage.createVehicle({
-            imei: updateData.imei,
-            lat: updateData.lat,
-            lng: updateData.lng,
-            speed: updateData.speed,
-            battery: updateData.battery,
-            altitude: "0",
-            timestamp: updateData.timestamp
-          });
-
-        }
-
-        broadcastLocationUpdate(vehicle);
-
-      } catch (err) {
-        console.error('Error processing TCP message:', err);
       }
-    });
 
-    socket.on('end', () => {
-      console.log('TCP Client disconnected');
-    });
+      broadcastLocationUpdate(vehicle);
 
-    socket.on('error', (err) => {
-      console.error('TCP Socket error:', err);
     });
 
   });
 
-  server.listen(PORT, '0.0.0.0', () => {
-    console.log(`TCP Listener running on port ${PORT}`);
+  server.listen(5000, "0.0.0.0", () => {
+    console.log("TCP Listener running on 5000");
   });
 
-  return server;
 }
