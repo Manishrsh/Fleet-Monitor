@@ -16,7 +16,7 @@ export default function Dashboard() {
   return (
     <div className="flex flex-col md:flex-row h-screen w-full bg-background overflow-hidden">
       {/* Error Banner */}
-      {isError && (
+      {/* {isError && (
         <div className="fixed top-0 left-0 right-0 bg-red-500/10 border-b border-red-500/30 px-4 py-3 flex items-center gap-3 z-50">
           <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
           <div>
@@ -26,7 +26,7 @@ export default function Dashboard() {
             </p>
           </div>
         </div>
-      )}
+      )} */}
 
       {/* Left Panel: Vehicle List */}
       <div className="w-full md:w-[400px] h-[45vh] md:h-full flex-shrink-0 z-20 md:z-10 shadow-2xl relative">
